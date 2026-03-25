@@ -1,7 +1,7 @@
 import Link from "next/link"
 import { MessageCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { WHATSAPP_URL } from "@/lib/constants"
+import { WhatsAppLink } from "@/components/layout/WhatsAppLink"
 
 export function ProductCTA() {
   return (
@@ -16,9 +16,9 @@ export function ProductCTA() {
             <Link href="/cotizar">Pedir cotización</Link>
           </Button>
           <Button asChild size="lg" variant="outline" className="border-white text-white hover:bg-white/10">
-            <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer">
+            <WhatsAppLink>
               <MessageCircle className="mr-2 h-5 w-5" /> WhatsApp
-            </a>
+            </WhatsAppLink>
           </Button>
         </div>
       </div>

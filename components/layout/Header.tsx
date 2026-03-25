@@ -4,7 +4,8 @@ import Link from "next/link"
 import { useState } from "react"
 import { Menu, X, ChevronDown, MessageCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { NAV_LINKS, WHATSAPP_URL } from "@/lib/constants"
+import { NAV_LINKS } from "@/lib/constants"
+import { WhatsAppLink } from "./WhatsAppLink"
 
 export function Header() {
   const [mobileOpen, setMobileOpen] = useState(false)
@@ -54,9 +55,9 @@ export function Header() {
             )
           )}
           <Button asChild size="sm" className="bg-green-600 hover:bg-green-700">
-            <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer">
+            <WhatsAppLink>
               <MessageCircle className="mr-2 h-4 w-4" /> WhatsApp
-            </a>
+            </WhatsAppLink>
           </Button>
         </nav>
 
@@ -98,9 +99,9 @@ export function Header() {
             )
           )}
           <Button asChild className="mt-3 w-full bg-green-600 hover:bg-green-700">
-            <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer">
+            <WhatsAppLink>
               <MessageCircle className="mr-2 h-4 w-4" /> WhatsApp
-            </a>
+            </WhatsAppLink>
           </Button>
         </div>
       )}

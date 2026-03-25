@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { cotizarSchema } from "@/lib/schemas"
 import { Resend } from "resend"
+import { trackEvent } from "@/lib/tracking"
 
 export async function POST(request: NextRequest) {
   try {
@@ -70,6 +71,18 @@ export async function POST(request: NextRequest) {
     } else {
       console.log("Cotización recibida (sin Resend configurado):", parsed.data)
     }
+
+    // Track conversion
+    await trackEvent({
+      event: "form_submit",
+      page: "/cotizar",
+      data: {
+        nombre: parsed.data.nombre,
+        empresa: parsed.data.empresa || "",
+        tipo_producto: parsed.data.tipo_producto,
+        cantidad: parsed.data.cantidad,
+      },
+    })
 
     return NextResponse.json({ success: true })
   } catch (error) {

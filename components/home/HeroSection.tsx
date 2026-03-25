@@ -1,7 +1,7 @@
 import Link from "next/link"
 import { MessageCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { WHATSAPP_URL } from "@/lib/constants"
+import { WhatsAppLink } from "@/components/layout/WhatsAppLink"
 
 export function HeroSection() {
   return (
@@ -20,9 +20,9 @@ export function HeroSection() {
             <Link href="/cotizar">Pedir cotización</Link>
           </Button>
           <Button asChild size="lg" variant="outline" className="border-green-600 text-green-600 hover:bg-green-50">
-            <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer">
+            <WhatsAppLink>
               <MessageCircle className="mr-2 h-5 w-5" /> WhatsApp
-            </a>
+            </WhatsAppLink>
           </Button>
         </div>
       </div>
