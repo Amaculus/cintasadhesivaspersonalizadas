@@ -20,7 +20,6 @@ module.exports = {
       '/': 1.0,
       '/cinta-adhesiva-personalizada': 0.9,
       '/cinta-de-embalaje-personalizada': 0.9,
-      '/packaging-personalizado': 0.9,
       '/cotizar': 0.8,
       '/blog': 0.7,
     }

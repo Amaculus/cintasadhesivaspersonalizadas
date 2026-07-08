@@ -16,7 +16,6 @@ export const NAV_LINKS = [
     children: [
       { label: "Cinta Adhesiva con Logo", href: "/cinta-adhesiva-personalizada" },
       { label: "Cinta de Embalaje", href: "/cinta-de-embalaje-personalizada" },
-      { label: "Packaging Personalizado", href: "/packaging-personalizado" },
     ],
   },
   { label: "Blog", href: "/blog" },
