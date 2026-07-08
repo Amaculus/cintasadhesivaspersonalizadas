@@ -1,7 +1,8 @@
 "use client"
 
-import { useEffect, useMemo, useState } from "react"
-import { MessageCircle } from "lucide-react"
+import { useCallback, useEffect, useMemo, useRef, useState } from "react"
+import { UploadCloud } from "lucide-react"
+import { WhatsAppIcon } from "@/components/icons/WhatsAppIcon"
 import { COMPANY } from "@/lib/constants"
 
 // ============================================================
@@ -15,8 +16,8 @@ const RECARGO_2COLORES_PCT = 0.1
 const MIN_CAJAS_2COLORES = 5
 
 type Color = "TRANSPA" | "BLANCO"
+type Tab = "visual" | "compare" | "upload"
 
-// Tabla de precios de fábrica (del cotizador original)
 const PRECIOS_FABRICA: {
   ancho: number
   largo: number
@@ -63,6 +64,25 @@ function formatARS(n: number) {
   })
 }
 
+// Precio final al cliente para un color+cantidad (misma fórmula que el original)
+function precioCliente(
+  fila: (typeof PRECIOS_FABRICA)[number] | null,
+  color: Color | null,
+  rollos: number | null,
+  dolar: number
+): number | null {
+  if (!fila || !color || rollos === null) return null
+  const precioFab = fila[color][rollos]
+  if (precioFab == null) return null
+  const cajas = rollos / 36
+  const recargo2C =
+    cajas >= MIN_CAJAS_2COLORES ? Math.round(precioFab * RECARGO_2COLORES_PCT) : 0
+  const costoFabrica = precioFab + recargo2C
+  const precioFabConMargen = costoFabrica / (1 - MARGEN)
+  const usd = precioFabConMargen + COSTO_POLIMERO_USD + COSTO_DISENO_USD
+  return usd * dolar
+}
+
 export function Cotizador() {
   const [ancho, setAncho] = useState(24)
   const [largo, setLargo] = useState(50)
@@ -70,6 +90,19 @@ export function Cotizador() {
   const [rollos, setRollos] = useState<number | null>(null)
   const [nombre, setNombre] = useState("")
   const [dolar, setDolar] = useState(DOLAR_FALLBACK)
+  const [tab, setTab] = useState<Tab>("visual")
+
+  // ---- Upload state ----
+  const [fileName, setFileName] = useState<string | null>(null)
+  const [uploadError, setUploadError] = useState<string | null>(null)
+  const [processing, setProcessing] = useState(false)
+  const [removeBg, setRemoveBg] = useState(true)
+  const [designReady, setDesignReady] = useState(false)
+  const [repeats, setRepeats] = useState(0)
+  const rawCanvasRef = useRef<HTMLCanvasElement | null>(null)
+  const sourceCanvasRef = useRef<HTMLCanvasElement | null>(null)
+  const previewCanvasRef = useRef<HTMLCanvasElement | null>(null)
+  const fileInputRef = useRef<HTMLInputElement | null>(null)
 
   // Dólar blue en vivo (fallback silencioso)
   useEffect(() => {
@@ -90,36 +123,37 @@ export function Cotizador() {
     [ancho, largo]
   )
 
-  function getPrecioFabrica(c: Color | null, r: number | null): number | null {
-    if (!fila || !c || r === null) return null
-    const p = fila[c][r]
-    return p ?? null
-  }
-
-  // Cálculo (idéntico al cotizador original)
   const cotizacion = useMemo(() => {
-    const precioFab = getPrecioFabrica(color, rollos)
-    if (precioFab === null || rollos === null || color === null) return null
-
+    const total = precioCliente(fila, color, rollos, dolar)
+    if (total === null || rollos === null || color === null) return null
     const cajas = rollos / 36
-    const recargo2C =
-      cajas >= MIN_CAJAS_2COLORES ? Math.round(precioFab * RECARGO_2COLORES_PCT) : 0
-    const costoFabrica = precioFab + recargo2C
-    const precioFabConMargen = costoFabrica / (1 - MARGEN)
-    const precioClienteUSD = precioFabConMargen + COSTO_POLIMERO_USD + COSTO_DISENO_USD
-    const precioClienteARS = precioClienteUSD * dolar
-    const xRolloARS = precioClienteARS / rollos
-
     return {
-      precioClienteARS: Math.round(precioClienteARS),
-      xRolloARS: Math.round(xRolloARS),
+      total: Math.round(total),
+      xRollo: Math.round(total / rollos),
       cajas,
       colorLabel: COLOR_LABELS[color],
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [color, rollos, dolar, fila])
+  }, [fila, color, rollos, dolar])
 
-  // Cambio de ancho: 24mm sólo permite 50m
+  // Precio por rollo de cada cantidad (para el hint de ahorro por volumen)
+  const perRoll = useMemo(() => {
+    const out: Record<number, number | null> = {}
+    for (const q of CANTIDADES) {
+      const t = precioCliente(fila, color, q.rollos, dolar)
+      out[q.rollos] = t === null ? null : Math.round(t / q.rollos)
+    }
+    return out
+  }, [fila, color, dolar])
+
+  const ahorroVsMin = useMemo(() => {
+    if (!color || rollos === null) return null
+    const base = perRoll[36]
+    const cur = perRoll[rollos]
+    if (!base || !cur || cur >= base) return null
+    return Math.round(((base - cur) / base) * 100)
+  }, [perRoll, color, rollos])
+
+  // -------- Handlers de inputs --------
   function onAncho(value: number) {
     setAncho(value)
     if (value === 24) setLargo(50)
@@ -136,22 +170,147 @@ export function Cotizador() {
     setRollos(null)
   }
 
+  // ============================================================
+  // PREVIEW — tiling del diseño sobre la cinta
+  // ============================================================
+  const tapeHeightPx = ancho === 48 ? 96 : 52
+  const STRIP_W = 320
+
+  const drawTiled = useCallback(() => {
+    const src = sourceCanvasRef.current
+    const cv = previewCanvasRef.current
+    if (!src || !cv) return
+    const H = ancho === 48 ? 96 : 52
+    cv.width = STRIP_W
+    cv.height = H
+    const ctx = cv.getContext("2d")
+    if (!ctx) return
+    ctx.clearRect(0, 0, STRIP_W, H)
+    const ratio = src.width / src.height || 1
+    const designW = Math.max(Math.round(H * ratio), 20)
+    const n = Math.max(1, Math.ceil(STRIP_W / designW))
+    for (let i = 0; i < n; i++) ctx.drawImage(src, i * designW, 0, designW, H)
+    setRepeats(n)
+  }, [ancho])
+
+  // Redibujar al cambiar el ancho (o cuando hay diseño nuevo)
+  useEffect(() => {
+    if (designReady) drawTiled()
+  }, [ancho, designReady, drawTiled])
+
+  // Construye sourceCanvas desde el raw, aplicando (o no) remoción de fondo
+  const buildSource = useCallback(() => {
+    const raw = rawCanvasRef.current
+    if (!raw) return
+    const copy = document.createElement("canvas")
+    copy.width = raw.width
+    copy.height = raw.height
+    const ctx = copy.getContext("2d")
+    if (!ctx) return
+    ctx.drawImage(raw, 0, 0)
+    if (removeBg) removeBackground(copy)
+    sourceCanvasRef.current = copy
+    setDesignReady(true)
+    drawTiled()
+  }, [removeBg, drawTiled])
+
+  useEffect(() => {
+    // re-procesa sólo cuando cambia el toggle de fondo (no en cada cambio de ancho)
+    if (rawCanvasRef.current) buildSource()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [removeBg])
+
+  async function processFile(file: File) {
+    setUploadError(null)
+    setProcessing(true)
+    try {
+      let raw: HTMLCanvasElement
+      if (file.type === "application/pdf") {
+        raw = await renderPdf(file)
+      } else if (file.type.startsWith("image/")) {
+        raw = await renderImage(file)
+      } else {
+        throw new Error("unsupported")
+      }
+      rawCanvasRef.current = raw
+      setFileName(file.name)
+      buildSource()
+    } catch (err) {
+      console.error("[cotizador upload]", err)
+      rawCanvasRef.current = null
+      sourceCanvasRef.current = null
+      setDesignReady(false)
+      setFileName(null)
+      setUploadError(
+        "No se pudo procesar el archivo. Probá con un PNG o JPG bien recortado, o mandanos el diseño por WhatsApp."
+      )
+    } finally {
+      setProcessing(false)
+    }
+  }
+
+  function onFileInput(e: React.ChangeEvent<HTMLInputElement>) {
+    const f = e.target.files?.[0]
+    if (f) processFile(f)
+  }
+
+  function resetUpload() {
+    rawCanvasRef.current = null
+    sourceCanvasRef.current = null
+    setDesignReady(false)
+    setFileName(null)
+    setUploadError(null)
+    setRepeats(0)
+    if (fileInputRef.current) fileInputRef.current.value = ""
+  }
+
+  // ============================================================
+  // WHATSAPP + tracking
+  // ============================================================
+  function track() {
+    const data = {
+      ancho,
+      largo,
+      color,
+      rollos,
+      total: cotizacion?.total,
+      xRollo: cotizacion?.xRollo,
+      diseno: fileName || null,
+    }
+    fetch("/api/track", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ event: "cotizador_lead", page: "/cotizar", data }),
+    }).catch(() => {})
+    const g = (window as unknown as { gtag?: (...a: unknown[]) => void }).gtag
+    if (typeof g === "function") {
+      g("event", "generate_lead", { currency: "ARS", value: cotizacion?.total })
+    }
+  }
+
+  const nombreOk = nombre.trim().length > 0
+  const canSend = !!cotizacion && nombreOk
+
   function enviarWA() {
-    if (!cotizacion || rollos === null) return
-    const cliente = nombre.trim() || "Cliente"
+    if (!cotizacion || rollos === null || !nombreOk) return
+    track()
+    const cliente = nombre.trim()
+    const diseno = fileName
+      ? `\n- Diseño: ${fileName} (lo adjunto en este chat)`
+      : ""
     const msg = `Hola, les escribo para solicitar una cotización.
 
 *Datos del pedido:*
 - Nombre/Empresa: ${cliente}
 - Cinta: ${ancho}mm x ${largo}m ${cotizacion.colorLabel}
-- Cantidad: ${rollos} rollos (${cotizacion.cajas} caja${cotizacion.cajas > 1 ? "s" : ""})
+- Cantidad: ${rollos} rollos (${cotizacion.cajas} caja${cotizacion.cajas > 1 ? "s" : ""})${diseno}
 
 *Precio estimado según cotizador:*
-- Total: $${formatARS(cotizacion.precioClienteARS)}
-- Precio por rollo: $${formatARS(cotizacion.xRolloARS)}
+- Total: $${formatARS(cotizacion.total)}
+- Precio por rollo: $${formatARS(cotizacion.xRollo)}
 - El precio incluye el polímero de la primera impresión
 
-Si les sirve, les puedo enviar mi diseño por acá para que lo revisen y vectoricen antes de producir. Gracias.`
+Quedo a la espera para confirmar. ¡Gracias!`
     window.open(
       `https://wa.me/${COMPANY.whatsapp}?text=${encodeURIComponent(msg)}`,
       "_blank"
@@ -159,6 +318,10 @@ Si les sirve, les puedo enviar mi diseño por acá para que lo revisen y vectori
   }
 
   const tapeText = "CINTA PERSONALIZADA · ".repeat(6)
+  const colorBgClass =
+    color === "BLANCO"
+      ? "border-neutral-300 bg-neutral-100"
+      : "border-sky-200 bg-gradient-to-b from-sky-50 to-sky-100"
 
   return (
     <div className="space-y-6">
@@ -189,47 +352,138 @@ Si les sirve, les puedo enviar mi diseño por acá para que lo revisen y vectori
         </div>
       </Card>
 
-      {/* PREVIEW */}
+      {/* PREVIEW con tabs */}
       <Card step={null} title="Preview">
-        <div className="rounded-lg bg-neutral-50 p-6">
-          <div className="flex items-center justify-center overflow-hidden">
-            <div
-              className={`relative flex items-center justify-center overflow-hidden rounded-sm border shadow-sm transition-all duration-300 ${
-                color === "BLANCO"
-                  ? "border-neutral-300 bg-neutral-100"
-                  : "border-sky-200 bg-gradient-to-b from-sky-50 to-sky-100"
+        <div className="mb-4 flex gap-2">
+          {(
+            [
+              ["visual", "Ver cinta"],
+              ["compare", "Comparar anchos"],
+              ["upload", "Subir diseño"],
+            ] as [Tab, string][]
+          ).map(([id, lbl]) => (
+            <button
+              key={id}
+              onClick={() => setTab(id)}
+              className={`flex-1 rounded-md border px-3 py-2 text-xs font-medium transition ${
+                tab === id
+                  ? "border-primary bg-primary text-white"
+                  : "border-input bg-neutral-50 text-muted-foreground hover:border-primary hover:text-neutral-800"
               }`}
-              style={{ width: 340, height: ancho === 48 ? 84 : 46 }}
             >
-              <span
-                className="truncate px-3 font-semibold uppercase tracking-widest text-primary/80"
-                style={{ fontSize: ancho === 48 ? 15 : 11 }}
+              {lbl}
+            </button>
+          ))}
+        </div>
+
+        {/* TAB visual */}
+        {tab === "visual" && (
+          <div className="rounded-lg bg-neutral-50 p-6">
+            <div className="flex items-center justify-center overflow-hidden">
+              <div
+                className={`flex items-center justify-center overflow-hidden rounded-sm border shadow-sm transition-all duration-300 ${colorBgClass}`}
+                style={{ width: 320, height: ancho === 48 ? 84 : 46 }}
               >
-                {tapeText}
-              </span>
+                <span
+                  className="truncate px-3 font-semibold uppercase tracking-widest text-primary/80"
+                  style={{ fontSize: ancho === 48 ? 15 : 11 }}
+                >
+                  {tapeText}
+                </span>
+              </div>
+            </div>
+            <p className="mt-4 text-center text-xs text-muted-foreground">
+              {ancho} mm de ancho · {largo} m de largo
+              {color ? ` · ${COLOR_LABELS[color]}` : ""}
+            </p>
+          </div>
+        )}
+
+        {/* TAB compare */}
+        {tab === "compare" && (
+          <div className="rounded-lg bg-neutral-50 p-6">
+            <div className="mx-auto max-w-sm space-y-4">
+              {[24, 48].map((w) => (
+                <div key={w} className="flex items-center gap-3">
+                  <span className="w-12 shrink-0 text-right text-xs font-semibold text-muted-foreground">
+                    {w} mm
+                  </span>
+                  <div
+                    className={`rounded transition-all ${
+                      ancho === w ? "bg-primary" : "bg-neutral-300"
+                    }`}
+                    style={{ height: w === 48 ? 24 : 12, width: "100%" }}
+                  />
+                </div>
+              ))}
+              <p className="text-center text-xs text-muted-foreground">
+                Las barras están en proporción real entre sí.
+              </p>
             </div>
           </div>
-          <p className="mt-4 text-center text-xs text-muted-foreground">
-            {ancho} mm de ancho · {largo} m de largo
-            {color ? ` · ${COLOR_LABELS[color]}` : ""}
-          </p>
-          {/* Comparación de anchos */}
-          <div className="mx-auto mt-6 max-w-sm space-y-3">
-            {[24, 48].map((w) => (
-              <div key={w} className="flex items-center gap-3">
-                <span className="w-12 shrink-0 text-right text-xs font-semibold text-muted-foreground">
-                  {w} mm
-                </span>
-                <div
-                  className={`rounded transition-all ${
-                    ancho === w ? "bg-primary" : "bg-neutral-300"
-                  }`}
-                  style={{ height: w === 48 ? 24 : 12, width: "100%" }}
+        )}
+
+        {/* TAB upload */}
+        {tab === "upload" && (
+          <div className="rounded-lg bg-neutral-50 p-6">
+            {!designReady && (
+              <label className="relative flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-neutral-300 bg-white px-6 py-8 text-center transition hover:border-primary hover:bg-blue-50">
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept=".pdf,image/*"
+                  onChange={onFileInput}
+                  className="absolute inset-0 cursor-pointer opacity-0"
                 />
+                <UploadCloud className="mb-2 h-8 w-8 text-primary" />
+                <span className="text-sm font-semibold text-neutral-900">
+                  {processing ? "Procesando…" : "Subí tu diseño"}
+                </span>
+                <span className="mt-1 text-xs text-muted-foreground">
+                  PNG, JPG o PDF · simulamos cómo se vería repetido en la cinta
+                </span>
+              </label>
+            )}
+
+            {uploadError && (
+              <p className="mt-3 text-center text-xs text-destructive">{uploadError}</p>
+            )}
+
+            {designReady && (
+              <div className="flex flex-col items-center gap-4">
+                <div
+                  className={`flex items-center justify-center overflow-hidden rounded-sm border shadow-sm ${colorBgClass}`}
+                  style={{ width: STRIP_W, height: tapeHeightPx }}
+                >
+                  <canvas
+                    ref={previewCanvasRef}
+                    className="block"
+                    style={{ mixBlendMode: "multiply" }}
+                  />
+                </div>
+                <p className="text-center text-xs text-muted-foreground">
+                  Simulación orientativa · ~{repeats} repetición{repeats === 1 ? "" : "es"} en el
+                  ancho útil. Antes de producir revisamos y vectorizamos tu archivo.
+                </p>
+                <label className="flex items-center gap-2 text-xs text-neutral-700">
+                  <input
+                    type="checkbox"
+                    checked={removeBg}
+                    onChange={(e) => setRemoveBg(e.target.checked)}
+                    className="h-4 w-4 accent-primary"
+                  />
+                  Quitar el fondo del diseño
+                </label>
+                <button
+                  onClick={resetUpload}
+                  className="rounded-md border border-input px-4 py-1.5 text-xs font-medium text-muted-foreground transition hover:border-neutral-800 hover:text-neutral-800"
+                >
+                  Cambiar archivo
+                </button>
               </div>
-            ))}
+            )}
           </div>
-        </div>
+        )}
       </Card>
 
       {/* PASO 2 — TIPO */}
@@ -247,7 +501,8 @@ Si les sirve, les puedo enviar mi diseño por acá para que lo revisen y vectori
       <Card step={3} title="Cantidad de rollos">
         <div className="grid grid-cols-3 gap-3">
           {CANTIDADES.map((q) => {
-            const ok = color !== null && getPrecioFabrica(color, q.rollos) !== null
+            const pr = perRoll[q.rollos]
+            const ok = color !== null && pr !== null
             return (
               <OptionButton
                 key={q.rollos}
@@ -257,17 +512,22 @@ Si les sirve, les puedo enviar mi diseño por acá para que lo revisen y vectori
               >
                 {q.label}
                 <span className="mt-0.5 block text-[11px] font-normal opacity-70">
-                  {q.sub}
+                  {ok ? `${q.sub} · $${formatARS(pr!)}/rollo` : q.sub}
                 </span>
               </OptionButton>
             )
           })}
         </div>
+        {color && (
+          <p className="mt-3 text-xs text-muted-foreground">
+            A mayor cantidad, menor precio por rollo.
+          </p>
+        )}
       </Card>
 
       {/* PASO 4 — DATOS */}
       <Card step={4} title="Tus datos">
-        <Field label="Nombre o empresa">
+        <Field label="Nombre o empresa *">
           <input
             type="text"
             value={nombre}
@@ -291,11 +551,11 @@ Si les sirve, les puedo enviar mi diseño por acá para que lo revisen y vectori
             </div>
             <div className="mt-1 text-5xl font-bold">
               <span className="align-super text-2xl">$</span>
-              {formatARS(cotizacion.precioClienteARS)}
+              {formatARS(cotizacion.total)}
             </div>
             <div className="mt-1 text-sm text-blue-100">
-              ${formatARS(cotizacion.xRolloARS)} por rollo · incluye el polímero de la primera
-              impresión
+              ${formatARS(cotizacion.xRollo)} por rollo
+              {ahorroVsMin ? ` · ahorrás ${ahorroVsMin}% vs 36 rollos` : ""}
             </div>
             <hr className="my-5 border-white/15" />
             <div className="grid gap-1.5 sm:grid-cols-2">
@@ -305,6 +565,7 @@ Si les sirve, les puedo enviar mi diseño por acá para que lo revisen y vectori
                 value={`${rollos} rollos · ${cotizacion.cajas} caja${cotizacion.cajas > 1 ? "s" : ""}`}
               />
               <Breakdown label="Polímero" value="Incluido en esta primera impresión" />
+              {fileName && <Breakdown label="Diseño" value={fileName} />}
             </div>
           </>
         )}
@@ -312,19 +573,127 @@ Si les sirve, les puedo enviar mi diseño por acá para que lo revisen y vectori
 
       <button
         onClick={enviarWA}
-        disabled={!cotizacion}
+        disabled={!canSend}
         className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#25D366] px-8 py-4 font-semibold text-white transition hover:bg-[#1ebd5a] disabled:cursor-not-allowed disabled:bg-neutral-300"
       >
-        <MessageCircle className="h-5 w-5" />
+        <WhatsAppIcon className="h-5 w-5" />
         Solicitar cotización por WhatsApp
       </button>
+      {cotizacion && !nombreOk && (
+        <p className="text-center text-xs text-destructive">
+          Completá tu nombre o empresa para enviar la cotización.
+        </p>
+      )}
       <p className="text-center text-xs text-muted-foreground">
-        El precio incluye el costo del polímero en esta primera impresión. En reimpresiones del
-        mismo diseño no vuelve a cobrarse. Podés enviarnos tu diseño por WhatsApp para revisarlo y
-        vectorizarlo antes de producir.
+        Precio orientativo, sujeto a confirmación · calculado con dólar blue ${formatARS(dolar)}. El
+        polímero se cobra sólo en la primera impresión; en reimpresiones del mismo diseño no vuelve a
+        cobrarse.
       </p>
     </div>
   )
+}
+
+// ============================================================
+// PDF / imagen → canvas
+// ============================================================
+async function renderImage(file: File): Promise<HTMLCanvasElement> {
+  const url = URL.createObjectURL(file)
+  try {
+    const img = await new Promise<HTMLImageElement>((resolve, reject) => {
+      const im = new Image()
+      im.onload = () => resolve(im)
+      im.onerror = reject
+      im.src = url
+    })
+    const w = img.naturalWidth || 600
+    const h = img.naturalHeight || 300
+    const canvas = document.createElement("canvas")
+    canvas.width = w
+    canvas.height = h
+    canvas.getContext("2d")!.drawImage(img, 0, 0, w, h)
+    return canvas
+  } finally {
+    URL.revokeObjectURL(url)
+  }
+}
+
+async function renderPdf(file: File): Promise<HTMLCanvasElement> {
+  const pdfjs = await import("pdfjs-dist")
+  pdfjs.GlobalWorkerOptions.workerSrc = "/pdf.worker.min.mjs"
+  const buf = await file.arrayBuffer()
+  const doc = await pdfjs.getDocument({ data: buf }).promise
+  const page = await doc.getPage(1)
+  const base = page.getViewport({ scale: 1 })
+  const target = 300 // px de alto para buena resolución
+  const scale = target / base.height
+  const vp = page.getViewport({ scale })
+  const canvas = document.createElement("canvas")
+  canvas.width = Math.round(vp.width)
+  canvas.height = Math.round(vp.height)
+  const ctx = canvas.getContext("2d")!
+  await page.render(
+    { canvas, canvasContext: ctx, viewport: vp } as Parameters<typeof page.render>[0]
+  ).promise
+  return canvas
+}
+
+// ============================================================
+// Remoción de fondo — flood-fill BFS desde los bordes
+// (portado del cotizador original)
+// ============================================================
+function removeBackground(canvas: HTMLCanvasElement) {
+  const w = canvas.width
+  const h = canvas.height
+  const ctx = canvas.getContext("2d")
+  if (!ctx) return
+  const imageData = ctx.getImageData(0, 0, w, h)
+  const d = imageData.data
+
+  let sumR = 0, sumG = 0, sumB = 0, count = 0
+  const sampleEdge = (x: number, y: number) => {
+    const i = (y * w + x) * 4
+    if (d[i + 3] < 10) return
+    sumR += d[i]; sumG += d[i + 1]; sumB += d[i + 2]; count++
+  }
+  for (let x = 0; x < w; x++) { sampleEdge(x, 0); sampleEdge(x, h - 1) }
+  for (let y = 1; y < h - 1; y++) { sampleEdge(0, y); sampleEdge(w - 1, y) }
+  if (count === 0) return
+
+  const bgR = sumR / count, bgG = sumG / count, bgB = sumB / count
+  const bgLum = 0.299 * bgR + 0.587 * bgG + 0.114 * bgB
+  const TOLERANCE = bgLum > 200 ? 35 : 20
+  const dist = (i: number) => {
+    const dr = d[i] - bgR, dg = d[i + 1] - bgG, db = d[i + 2] - bgB
+    return Math.sqrt(dr * dr + dg * dg + db * db)
+  }
+
+  const visited = new Uint8Array(w * h)
+  const queue = new Int32Array(w * h * 2)
+  let qHead = 0, qTail = 0
+  const enqueue = (x: number, y: number) => {
+    if (x < 0 || x >= w || y < 0 || y >= h) return
+    const flat = y * w + x
+    if (visited[flat]) return
+    const i = flat * 4
+    if (d[i + 3] < 10) { visited[flat] = 1; return }
+    if (dist(i) <= TOLERANCE) {
+      visited[flat] = 1
+      queue[qTail++] = x
+      queue[qTail++] = y
+    }
+  }
+  for (let x = 0; x < w; x++) { enqueue(x, 0); enqueue(x, h - 1) }
+  for (let y = 1; y < h - 1; y++) { enqueue(0, y); enqueue(w - 1, y) }
+
+  while (qHead < qTail) {
+    const x = queue[qHead++]
+    const y = queue[qHead++]
+    const i = (y * w + x) * 4
+    const t = dist(i) / TOLERANCE
+    d[i + 3] = Math.round(Math.max(0, (t - 0.4) / 0.6) * 255)
+    enqueue(x + 1, y); enqueue(x - 1, y); enqueue(x, y + 1); enqueue(x, y - 1)
+  }
+  ctx.putImageData(imageData, 0, 0)
 }
 
 // ============================================================

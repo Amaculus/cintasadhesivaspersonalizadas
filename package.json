@@ -25,6 +25,7 @@
     "marked": "^18.0.5",
     "next": "14.2.35",
     "next-mdx-remote": "^6.0.0",
+    "pdfjs-dist": "^4.10.38",
     "react": "^18",
     "react-dom": "^18",
     "react-hook-form": "^7.72.0",

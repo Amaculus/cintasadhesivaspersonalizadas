@@ -6,10 +6,11 @@ import { WHATSAPP_URL } from "@/lib/constants"
 export function WhatsAppLink({
   children,
   className,
+  ...props
 }: {
   children: React.ReactNode
   className?: string
-}) {
+} & React.AnchorHTMLAttributes<HTMLAnchorElement>) {
   const pathname = usePathname()
 
   function handleClick() {
@@ -31,6 +32,7 @@ export function WhatsAppLink({
       rel="noopener noreferrer"
       className={className}
       onClick={handleClick}
+      {...props}
     >
       {children}
     </a>
