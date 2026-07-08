@@ -1,8 +1,15 @@
 import fs from "fs"
 import path from "path"
 import matter from "gray-matter"
+import { marked } from "marked"
+
+marked.setOptions({ gfm: true, breaks: false })
 
 const BLOG_DIR = path.join(process.cwd(), "content", "blog")
+
+function toHtml(markdown: string): string {
+  return marked.parse(markdown, { async: false }) as string
+}
 
 export interface BlogPost {
   slug: string
@@ -26,7 +33,7 @@ export function getAllPosts(): BlogPost[] {
         title: data.title || slug,
         description: data.description || "",
         date: data.date || "",
-        content,
+        content: toHtml(content),
       }
     })
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
@@ -42,6 +49,6 @@ export function getPostBySlug(slug: string): BlogPost | null {
     title: data.title || slug,
     description: data.description || "",
     date: data.date || "",
-    content,
+    content: toHtml(content),
   }
 }
