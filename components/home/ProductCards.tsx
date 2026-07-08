@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { ArrowRight, Package, Truck } from "lucide-react"
+import { ArrowRight, Package, Truck, Boxes } from "lucide-react"
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
 
 const products = [
@@ -15,6 +15,12 @@ const products = [
     href: "/cinta-de-embalaje-personalizada",
     icon: Truck,
   },
+  {
+    title: "Packaging Personalizado",
+    description: "Convertí cada envío en branding. La forma más económica de tener packaging con tu marca: cinta impresa con tu logo.",
+    href: "/packaging-personalizado",
+    icon: Boxes,
+  },
 ]
 
 export function ProductCards() {
@@ -24,7 +30,7 @@ export function ProductCards() {
         <h2 className="mb-10 text-center text-3xl font-bold text-neutral-900">
           Nuestros Productos
         </h2>
-        <div className="grid gap-6 md:grid-cols-2">
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {products.map((product) => (
             <Link key={product.href} href={product.href} className="group">
               <Card className="h-full transition-shadow hover:shadow-lg">

@@ -70,7 +70,7 @@ export default function CintaEmbalajePage() {
           </h2>
           <div className="space-y-4 text-neutral-600">
             <p>
-              Nuestra <strong>cinta de embalaje personalizada</strong> está diseñada para operaciones que necesitan volumen, resistencia y presencia de marca. Cada rollo de <strong>cintas personalizadas para empaque</strong> lleva tu logo impreso en alta definición.
+              Nuestra <strong>cinta de embalaje personalizada</strong> —también conocida como <strong>cinta de embalar personalizada</strong>— está diseñada para operaciones que necesitan volumen, resistencia y presencia de marca. Cada rollo de <strong>cintas personalizadas para empaque</strong> lleva tu logo impreso en alta definición.
             </p>
             <p>
               Fabricamos <strong>cintas impresas personalizadas</strong> en formato estándar de 48mm — el más utilizado en logística y e-commerce. Es la <strong>cinta para cajas personalizada</strong> que necesitás: resistente al manipuleo, apta para cadena de frío y con adhesivo que no se despega.
