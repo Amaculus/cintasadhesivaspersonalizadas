@@ -15,6 +15,7 @@ export const metadata: Metadata = {
     title: "Cinta Adhesiva Personalizada con Logo | Desde Pocas Unidades",
     description: "Cintas adhesivas personalizadas con tu logo. Cinta impresa personalizada en hasta 3 colores. Fabricantes en Argentina.",
     url: `${COMPANY.url}/cinta-adhesiva-personalizada`,
+    images: ["/images/og-cover.jpg"],
   },
 }
 
@@ -49,7 +50,7 @@ export default function CintaAdhesivaPage() {
       <ProductHero
         title="Cinta Adhesiva Personalizada con Logo"
         description="Fabricamos cintas adhesivas personalizadas con tu logo, marca o diseño. Cinta adhesiva impresa en hasta 3 colores sobre fondo transparente o blanco — ideal como tape personalizado para tus envíos."
-        image="https://placehold.co/800x600/e2e8f0/475569?text=Cinta+Adhesiva+Impresa"
+        image="/images/cinta-adhesiva.webp"
         imageAlt="Cinta adhesiva personalizada con logo impreso — cinta scotch personalizada para envíos"
       />
       <SpecsTable specs={specs} />

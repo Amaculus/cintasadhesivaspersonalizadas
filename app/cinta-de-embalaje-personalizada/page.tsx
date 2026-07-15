@@ -15,6 +15,7 @@ export const metadata: Metadata = {
     title: "Cinta de Embalaje Personalizada con Logo | Venta Mayorista",
     description: "Cintas personalizadas para empaque. Cintas de embalaje con logo para e-commerce y logística. Fabricantes en Argentina.",
     url: `${COMPANY.url}/cinta-de-embalaje-personalizada`,
+    images: ["/images/og-cover.jpg"],
   },
 }
 
@@ -57,7 +58,7 @@ export default function CintaEmbalajePage() {
       <ProductHero
         title="Cinta de Embalaje Personalizada"
         description="Cintas personalizadas para empaque con tu logo, marca o leyenda. Cintas de embalaje con logo en formato industrial de 48mm — adhesivo de alta retención, resistente a cadena de frío y humedad."
-        image="https://placehold.co/800x600/e2e8f0/475569?text=Cinta+Embalaje+Personalizada"
+        image="/images/cinta-embalaje.webp"
         imageAlt="Cinta de embalaje personalizada con logo — cintas personalizadas para empaque y cajas"
       />
       <SpecsTable specs={specs} />
