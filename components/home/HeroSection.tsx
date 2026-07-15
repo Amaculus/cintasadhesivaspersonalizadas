@@ -1,6 +1,6 @@
 import Link from "next/link"
-import { MessageCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { WhatsAppIcon } from "@/components/icons/WhatsAppIcon"
 import { WhatsAppLink } from "@/components/layout/WhatsAppLink"
 
 export function HeroSection() {
@@ -21,7 +21,7 @@ export function HeroSection() {
           </Button>
           <Button asChild size="lg" variant="outline" className="border-green-600 text-green-600 hover:bg-green-50">
             <WhatsAppLink>
-              <MessageCircle className="mr-2 h-5 w-5" /> WhatsApp
+              <WhatsAppIcon className="mr-2 h-5 w-5" /> WhatsApp
             </WhatsAppLink>
           </Button>
         </div>
