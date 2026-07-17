@@ -38,6 +38,7 @@ const localBusinessSchema = {
   name: COMPANY.name,
   url: COMPANY.url,
   telephone: `+${COMPANY.whatsapp}`,
+  email: COMPANY.email,
   address: {
     "@type": "PostalAddress",
     addressLocality: "Buenos Aires",
@@ -45,6 +46,12 @@ const localBusinessSchema = {
   },
   description: COMPANY.description,
   areaServed: "AR",
+  openingHoursSpecification: {
+    "@type": "OpeningHoursSpecification",
+    dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+    opens: "09:00",
+    closes: "21:00",
+  },
 }
 
 const websiteSchema = {

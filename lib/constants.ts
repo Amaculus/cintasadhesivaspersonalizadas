@@ -3,7 +3,7 @@ export const COMPANY = {
   shortName: "CAP",
   url: process.env.NEXT_PUBLIC_SITE_URL || "https://cintasadhesivaspersonalizadas.com.ar",
   whatsapp: process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "5491112345678",
-  email: "info@cintasadhesivaspersonalizadas.com.ar",
+  email: "molinaribr@gmail.com",
   location: "Buenos Aires, Argentina",
   description: "Fabricantes de cintas adhesivas personalizadas en Argentina.",
 }
