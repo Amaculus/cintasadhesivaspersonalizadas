@@ -43,22 +43,20 @@ const productSchema = {
   },
 }
 
+// FAQ anclada en queries reales de esta página: "cinta scotch personalizada" (110),
+// "cinta transparente con logo", "cinta adhesiva con logo". Sin repetir con home/embalaje/blog.
 const faqs = [
   {
-    q: "¿Puedo pedir cinta adhesiva personalizada en pocas unidades?",
-    a: "Sí. Ofrecemos cinta adhesiva personalizada desde pocas unidades — no necesitás hacer pedidos de miles de rollos. Consultanos por el mínimo exacto según el tipo de cinta que necesitás.",
+    q: "¿Hacen cinta scotch personalizada?",
+    a: "Sí. Fabricamos cinta tipo scotch personalizada en formato chico de 24mm y también en 48mm, todas impresas con tu logo en hasta 3 colores.",
   },
   {
-    q: "¿Qué diferencia hay entre cinta transparente personalizada y con fondo blanco?",
-    a: "La cinta transparente personalizada deja ver el cartón de la caja y tu logo flota sobre la superficie. La de fondo blanco genera mayor contraste y visibilidad del diseño. Ambas se imprimen en hasta 3 colores.",
+    q: "¿Se puede imprimir el logo sobre cinta transparente?",
+    a: "Sí. Podés elegir fondo transparente —tu logo flota sobre el cartón de la caja— o fondo blanco para mayor contraste. Ambas versiones se imprimen en hasta 3 colores.",
   },
   {
-    q: "¿Hacen cinta scotch personalizada o solo cinta de embalaje?",
-    a: "Fabricamos tanto cinta tipo scotch personalizada en formatos chicos (24mm) como cinta de embalaje en 48mm y 72mm. Todas se imprimen con tu logo.",
-  },
-  {
-    q: "¿Hacen envíos a todo el país?",
-    a: "Sí. Somos fabricantes de cinta adhesiva personalizada en Argentina y despachamos a todo el país por transporte y correo.",
+    q: "¿En qué anchos viene la cinta adhesiva personalizada?",
+    a: "En 24mm (tipo scotch), 48mm (el ancho estándar) y 72mm para usos especiales. El largo por rollo es de 50m o 100m.",
   },
 ]
 

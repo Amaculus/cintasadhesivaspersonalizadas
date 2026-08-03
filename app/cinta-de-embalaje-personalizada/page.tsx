@@ -51,22 +51,20 @@ const productSchema = {
   },
 }
 
+// FAQ anclada en PAA/queries reales: "¿qué cinta se usa para embalar?", "¿cuánto cuesta
+// una cinta de embalaje?", "cinta de embalaje con logo". Sin repetir con home/adhesiva/blog.
 const faqs = [
   {
-    q: "¿Venden cinta adhesiva personalizada mayorista?",
-    a: "Sí. Ofrecemos precios escalonados por volumen — a mayor cantidad, menor costo unitario. Pedí cotización indicando tu volumen estimado y te pasamos precio mayorista.",
+    q: "¿Qué cinta se usa para embalar con logo?",
+    a: "La cinta de embalaje de polipropileno (BOPP) de 48mm impresa con tu logo: resistente, económica y rápida de aplicar con dispensador. Es el estándar para e-commerce y logística.",
   },
   {
-    q: "¿Cuál es la diferencia entre cinta de embalaje personalizada y cinta adhesiva con logo?",
-    a: "Son productos similares. La cinta de embalaje personalizada se refiere al formato industrial de 48mm o 72mm pensado para cajas y logística. La cinta adhesiva con logo incluye también formatos más chicos (24mm) para usos diversos.",
+    q: "¿Cuánto cuesta una cinta de embalaje personalizada?",
+    a: "Depende del volumen, el tipo de cinta y la cantidad de colores. Podés calcular un precio estimado al instante en nuestro cotizador y cerrar el pedido por WhatsApp.",
   },
   {
-    q: "¿Tienen cinta para cajas personalizada resistente al frío?",
-    a: "Sí. Nuestra cinta de embalaje personalizada usa adhesivo acrílico de alta retención, apto para cadena de frío y ambientes húmedos. No se despega ni pierde adherencia.",
-  },
-  {
-    q: "¿Puedo usar la misma cinta adhesiva impresa para distintos productos?",
-    a: "Sí. La cinta de embalaje con logo se puede usar en cualquier tipo de caja o embalaje. Un solo diseño para todos tus envíos, simplificando la operación.",
+    q: "¿Qué ancho de cinta de embalaje conviene, 48 o 72mm?",
+    a: "El 48mm cubre la mayoría de las cajas y es el estándar de la industria. El 72mm conviene para cajas grandes o pesadas, o cuando querés sellar con una sola pasada.",
   },
 ]
 

@@ -6,30 +6,28 @@ import {
 } from "@/components/ui/accordion"
 import { JsonLd } from "@/components/seo/JsonLd"
 
+// FAQ de la home: ancladas en las queries "umbrella" (cinta personalizada / cintas
+// personalizadas / cinta personalizada logo). Preguntas distintas a las de producto y blog.
 const faqs = [
   {
-    q: "¿Cuál es el pedido mínimo para cintas adhesivas personalizadas?",
-    a: "El pedido mínimo es accesible y competitivo — consultanos por la cantidad exacta según el tipo de cinta que necesites. Es uno de los mínimos más bajos del mercado.",
+    q: "¿Qué es una cinta personalizada?",
+    a: "Es una cinta adhesiva impresa con tu logo, marca o diseño en lugar de una cinta genérica. Se usa para sellar cajas y envíos, convirtiendo cada paquete en branding para tu empresa.",
   },
   {
-    q: "¿Cuánto tarda la producción y entrega?",
-    a: "Una vez aprobado el boceto, el plazo de producción es de pocos días hábiles. Los envíos al interior se realizan por transporte y llegan en 3 a 7 días según la zona.",
+    q: "¿Cuál es el pedido mínimo para cintas personalizadas?",
+    a: "Trabajamos desde cantidades accesibles, sin mínimos altos. Pedí tu cotización indicando el volumen que necesitás y te confirmamos el mínimo exacto según el tipo de cinta.",
   },
   {
-    q: "¿Qué archivo necesito enviar para el logo?",
-    a: "Necesitamos el logo en formato vectorial (PDF, AI, SVG o EPS). También aceptamos PNG de alta resolución (mínimo 300 DPI).",
-  },
-  {
-    q: "¿Cuántos colores puedo imprimir?",
-    a: "Imprimimos hasta 3 colores. Cada color adicional puede tener un costo de polímero asociado.",
+    q: "¿Qué necesito enviar para imprimir mi logo?",
+    a: "Idealmente tu logo en formato vectorial (PDF, AI, SVG o EPS). También sirve un PNG de alta resolución (mínimo 300 DPI) con fondo transparente.",
   },
   {
     q: "¿Hacen envíos a todo el país?",
-    a: "Sí, enviamos a toda Argentina a través de transporte y correo.",
+    a: "Sí, coordinamos envíos a toda la Argentina por transporte y correo. Consultá por tu zona al pedir la cotización.",
   },
   {
-    q: "¿Qué es el polímero y tiene costo adicional?",
-    a: "El polímero es la goma de impresión (similar a una matriz). Consultanos sobre nuestra política actual de costos de polímero — en muchos casos se bonifica.",
+    q: "¿Cuánto tardan la producción y la entrega?",
+    a: "Una vez aprobado el boceto, la producción lleva pocos días hábiles; al envío se le suma el tiempo de transporte según la zona.",
   },
 ]
 
