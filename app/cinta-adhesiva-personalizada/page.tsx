@@ -22,7 +22,7 @@ export const metadata: Metadata = {
 const specs = [
   { label: "Material", value: "BOPP / Polipropileno" },
   { label: "Adhesivo", value: "Acrílico base agua" },
-  { label: "Anchos disponibles", value: "24mm, 48mm, 72mm" },
+  { label: "Anchos disponibles", value: "24mm y 48mm (72mm a consultar)" },
   { label: "Largo por rollo", value: "50m o 100m" },
   { label: "Colores de impresión", value: "Hasta 3 colores" },
   { label: "Fondo", value: "Transparente o blanco" },
@@ -56,7 +56,7 @@ const faqs = [
   },
   {
     q: "¿En qué anchos viene la cinta adhesiva personalizada?",
-    a: "En 24mm (tipo scotch), 48mm (el ancho estándar) y 72mm para usos especiales. El largo por rollo es de 50m o 100m.",
+    a: "Cotizamos online en 24mm (tipo scotch) y 48mm (el ancho estándar), con largo de 50m o 100m por rollo. El formato de 72mm está disponible a consultar.",
   },
 ]
 

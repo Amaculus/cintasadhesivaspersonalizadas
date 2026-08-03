@@ -22,7 +22,7 @@ export const metadata: Metadata = {
 const specs = [
   { label: "Material", value: "BOPP / Polipropileno de alta resistencia" },
   { label: "Adhesivo", value: "Acrílico de alta retención" },
-  { label: "Ancho estándar", value: "48mm (también disponible en 72mm)" },
+  { label: "Ancho estándar", value: "48mm (72mm a consultar)" },
   { label: "Largo por rollo", value: "50m o 100m" },
   { label: "Resistencia", value: "Apto cadena de frío y humedad" },
   { label: "Impresión", value: "Hasta 3 colores — cinta adhesiva impresa con tu diseño" },
@@ -63,8 +63,8 @@ const faqs = [
     a: "Depende del volumen, el tipo de cinta y la cantidad de colores. Podés calcular un precio estimado al instante en nuestro cotizador y cerrar el pedido por WhatsApp.",
   },
   {
-    q: "¿Qué ancho de cinta de embalaje conviene, 48 o 72mm?",
-    a: "El 48mm cubre la mayoría de las cajas y es el estándar de la industria. El 72mm conviene para cajas grandes o pesadas, o cuando querés sellar con una sola pasada.",
+    q: "¿Qué ancho de cinta de embalaje conviene?",
+    a: "El 48mm cubre la mayoría de las cajas y es el estándar que cotizamos online. Para cajas grandes o pesadas existe el formato de 72mm, disponible a consultar.",
   },
 ]
 
