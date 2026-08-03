@@ -70,11 +70,26 @@ const faqSchema = {
   })),
 }
 
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Inicio", item: COMPANY.url },
+    {
+      "@type": "ListItem",
+      position: 2,
+      name: "Cinta Adhesiva Personalizada",
+      item: `${COMPANY.url}/cinta-adhesiva-personalizada`,
+    },
+  ],
+}
+
 export default function CintaAdhesivaPage() {
   return (
     <>
       <JsonLd data={productSchema} />
       <JsonLd data={faqSchema} />
+      <JsonLd data={breadcrumbSchema} />
       <ProductHero
         title="Cinta Adhesiva Personalizada con Logo"
         description="Fabricamos cintas adhesivas personalizadas con tu logo, marca o diseño. Cinta adhesiva impresa en hasta 3 colores sobre fondo transparente o blanco — ideal como tape personalizado para tus envíos."

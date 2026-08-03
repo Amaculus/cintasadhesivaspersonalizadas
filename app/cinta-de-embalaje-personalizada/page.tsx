@@ -78,11 +78,26 @@ const faqSchema = {
   })),
 }
 
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Inicio", item: COMPANY.url },
+    {
+      "@type": "ListItem",
+      position: 2,
+      name: "Cinta de Embalaje Personalizada",
+      item: `${COMPANY.url}/cinta-de-embalaje-personalizada`,
+    },
+  ],
+}
+
 export default function CintaEmbalajePage() {
   return (
     <>
       <JsonLd data={productSchema} />
       <JsonLd data={faqSchema} />
+      <JsonLd data={breadcrumbSchema} />
       <ProductHero
         title="Cinta de Embalaje Personalizada"
         description="Cintas personalizadas para empaque con tu logo, marca o leyenda. Cintas de embalaje con logo en formato industrial de 48mm — adhesivo de alta retención, resistente a cadena de frío y humedad."

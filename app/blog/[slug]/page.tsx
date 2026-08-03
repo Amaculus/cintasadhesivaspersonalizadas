@@ -17,10 +17,20 @@ export function generateStaticParams() {
 export function generateMetadata({ params }: Props): Metadata {
   const post = getPostBySlug(params.slug)
   if (!post) return {}
+  const url = `${COMPANY.url}/blog/${post.slug}`
   return {
     title: `${post.title} | Blog`,
     description: post.description,
-    alternates: { canonical: `${COMPANY.url}/blog/${post.slug}` },
+    alternates: { canonical: url },
+    openGraph: {
+      type: "article",
+      title: post.title,
+      description: post.description,
+      url,
+      publishedTime: post.date || undefined,
+      images: ["/images/og-cover.jpg"],
+    },
+    twitter: { card: "summary_large_image", images: ["/images/og-cover.jpg"] },
   }
 }
 
@@ -28,8 +38,33 @@ export default function BlogPostPage({ params }: Props) {
   const post = getPostBySlug(params.slug)
   if (!post) notFound()
 
+  const url = `${COMPANY.url}/blog/${post.slug}`
+  const articleSchema = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline: post.title,
+    description: post.description,
+    datePublished: post.date || undefined,
+    dateModified: post.date || undefined,
+    image: `${COMPANY.url}/images/og-cover.jpg`,
+    author: { "@type": "Organization", name: COMPANY.name },
+    publisher: { "@type": "Organization", name: COMPANY.name },
+    mainEntityOfPage: url,
+  }
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Inicio", item: COMPANY.url },
+      { "@type": "ListItem", position: 2, name: "Blog", item: `${COMPANY.url}/blog` },
+      { "@type": "ListItem", position: 3, name: post.title, item: url },
+    ],
+  }
+
   return (
     <article className="py-16">
+      <JsonLd data={articleSchema} />
+      <JsonLd data={breadcrumbSchema} />
       <div className="mx-auto max-w-3xl px-4">
         <Link href="/blog" className="mb-6 inline-flex items-center text-sm text-primary hover:underline">
           <ArrowLeft className="mr-1 h-4 w-4" /> Volver al blog
