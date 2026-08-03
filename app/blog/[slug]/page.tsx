@@ -3,6 +3,7 @@ import { notFound } from "next/navigation"
 import Link from "next/link"
 import { ArrowLeft } from "lucide-react"
 import { getAllPosts, getPostBySlug } from "@/lib/blog"
+import { JsonLd } from "@/components/seo/JsonLd"
 import { COMPANY } from "@/lib/constants"
 
 interface Props {
@@ -38,6 +39,31 @@ export default function BlogPostPage({ params }: Props) {
           <time className="mb-8 block text-sm text-neutral-500">{post.date}</time>
         )}
         <div className="prose prose-neutral max-w-none" dangerouslySetInnerHTML={{ __html: post.content }} />
+
+        {post.faqs.length > 0 && (
+          <section className="mt-12 border-t pt-8">
+            <h2 className="mb-6 text-2xl font-bold text-neutral-900">Preguntas frecuentes</h2>
+            <div className="space-y-6">
+              {post.faqs.map((faq, i) => (
+                <div key={i}>
+                  <h3 className="mb-1 font-semibold text-neutral-900">{faq.q}</h3>
+                  <p className="text-neutral-600">{faq.a}</p>
+                </div>
+              ))}
+            </div>
+            <JsonLd
+              data={{
+                "@context": "https://schema.org",
+                "@type": "FAQPage",
+                mainEntity: post.faqs.map((f) => ({
+                  "@type": "Question",
+                  name: f.q,
+                  acceptedAnswer: { "@type": "Answer", text: f.a },
+                })),
+              }}
+            />
+          </section>
+        )}
       </div>
     </article>
   )

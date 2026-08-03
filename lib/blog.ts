@@ -11,12 +11,25 @@ function toHtml(markdown: string): string {
   return marked.parse(markdown, { async: false }) as string
 }
 
+export interface FaqItem {
+  q: string
+  a: string
+}
+
 export interface BlogPost {
   slug: string
   title: string
   description: string
   date: string
   content: string
+  faqs: FaqItem[]
+}
+
+function parseFaqs(data: { faqs?: unknown }): FaqItem[] {
+  if (!Array.isArray(data.faqs)) return []
+  return data.faqs
+    .filter((f): f is FaqItem => !!f && typeof f.q === "string" && typeof f.a === "string")
+    .map((f) => ({ q: f.q, a: f.a }))
 }
 
 export function getAllPosts(): BlogPost[] {
@@ -34,6 +47,7 @@ export function getAllPosts(): BlogPost[] {
         description: data.description || "",
         date: data.date || "",
         content: toHtml(content),
+        faqs: parseFaqs(data),
       }
     })
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
@@ -50,5 +64,6 @@ export function getPostBySlug(slug: string): BlogPost | null {
     description: data.description || "",
     date: data.date || "",
     content: toHtml(content),
+    faqs: parseFaqs(data),
   }
 }
