@@ -43,10 +43,40 @@ const productSchema = {
   },
 }
 
+const faqs = [
+  {
+    q: "¿Puedo pedir cinta adhesiva personalizada en pocas unidades?",
+    a: "Sí. Ofrecemos cinta adhesiva personalizada desde pocas unidades — no necesitás hacer pedidos de miles de rollos. Consultanos por el mínimo exacto según el tipo de cinta que necesitás.",
+  },
+  {
+    q: "¿Qué diferencia hay entre cinta transparente personalizada y con fondo blanco?",
+    a: "La cinta transparente personalizada deja ver el cartón de la caja y tu logo flota sobre la superficie. La de fondo blanco genera mayor contraste y visibilidad del diseño. Ambas se imprimen en hasta 3 colores.",
+  },
+  {
+    q: "¿Hacen cinta scotch personalizada o solo cinta de embalaje?",
+    a: "Fabricamos tanto cinta tipo scotch personalizada en formatos chicos (24mm) como cinta de embalaje en 48mm y 72mm. Todas se imprimen con tu logo.",
+  },
+  {
+    q: "¿Hacen envíos a todo el país?",
+    a: "Sí. Somos fabricantes de cinta adhesiva personalizada en Argentina y despachamos a todo el país por transporte y correo.",
+  },
+]
+
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faqs.map((f) => ({
+    "@type": "Question",
+    name: f.q,
+    acceptedAnswer: { "@type": "Answer", text: f.a },
+  })),
+}
+
 export default function CintaAdhesivaPage() {
   return (
     <>
       <JsonLd data={productSchema} />
+      <JsonLd data={faqSchema} />
       <ProductHero
         title="Cinta Adhesiva Personalizada con Logo"
         description="Fabricamos cintas adhesivas personalizadas con tu logo, marca o diseño. Cinta adhesiva impresa en hasta 3 colores sobre fondo transparente o blanco — ideal como tape personalizado para tus envíos."
@@ -114,24 +144,7 @@ export default function CintaAdhesivaPage() {
             Preguntas sobre cintas adhesivas personalizadas
           </h2>
           <div className="space-y-6">
-            {[
-              {
-                q: "¿Puedo pedir cinta adhesiva personalizada en pocas unidades?",
-                a: "Sí. Ofrecemos cinta adhesiva personalizada desde pocas unidades — no necesitás hacer pedidos de miles de rollos. Consultanos por el mínimo exacto según el tipo de cinta que necesitás.",
-              },
-              {
-                q: "¿Qué diferencia hay entre cinta transparente personalizada y con fondo blanco?",
-                a: "La cinta transparente personalizada deja ver el cartón de la caja y tu logo flota sobre la superficie. La de fondo blanco genera mayor contraste y visibilidad del diseño. Ambas se imprimen en hasta 3 colores.",
-              },
-              {
-                q: "¿Hacen cinta scotch personalizada o solo cinta de embalaje?",
-                a: "Fabricamos tanto cinta tipo scotch personalizada en formatos chicos (24mm) como cinta de embalaje en 48mm y 72mm. Todas se imprimen con tu logo.",
-              },
-              {
-                q: "¿Hacen envíos a todo el país?",
-                a: "Sí. Somos fabricantes de cinta adhesiva personalizada en Argentina y despachamos a todo el país por transporte y correo.",
-              },
-            ].map((faq, i) => (
+            {faqs.map((faq, i) => (
               <div key={i} className="rounded-lg border p-6">
                 <h3 className="mb-2 font-semibold text-neutral-900">{faq.q}</h3>
                 <p className="text-sm text-neutral-600">{faq.a}</p>

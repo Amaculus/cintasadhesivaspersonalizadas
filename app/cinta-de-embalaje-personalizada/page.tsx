@@ -51,10 +51,40 @@ const productSchema = {
   },
 }
 
+const faqs = [
+  {
+    q: "¿Venden cinta adhesiva personalizada mayorista?",
+    a: "Sí. Ofrecemos precios escalonados por volumen — a mayor cantidad, menor costo unitario. Pedí cotización indicando tu volumen estimado y te pasamos precio mayorista.",
+  },
+  {
+    q: "¿Cuál es la diferencia entre cinta de embalaje personalizada y cinta adhesiva con logo?",
+    a: "Son productos similares. La cinta de embalaje personalizada se refiere al formato industrial de 48mm o 72mm pensado para cajas y logística. La cinta adhesiva con logo incluye también formatos más chicos (24mm) para usos diversos.",
+  },
+  {
+    q: "¿Tienen cinta para cajas personalizada resistente al frío?",
+    a: "Sí. Nuestra cinta de embalaje personalizada usa adhesivo acrílico de alta retención, apto para cadena de frío y ambientes húmedos. No se despega ni pierde adherencia.",
+  },
+  {
+    q: "¿Puedo usar la misma cinta adhesiva impresa para distintos productos?",
+    a: "Sí. La cinta de embalaje con logo se puede usar en cualquier tipo de caja o embalaje. Un solo diseño para todos tus envíos, simplificando la operación.",
+  },
+]
+
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faqs.map((f) => ({
+    "@type": "Question",
+    name: f.q,
+    acceptedAnswer: { "@type": "Answer", text: f.a },
+  })),
+}
+
 export default function CintaEmbalajePage() {
   return (
     <>
       <JsonLd data={productSchema} />
+      <JsonLd data={faqSchema} />
       <ProductHero
         title="Cinta de Embalaje Personalizada"
         description="Cintas personalizadas para empaque con tu logo, marca o leyenda. Cintas de embalaje con logo en formato industrial de 48mm — adhesivo de alta retención, resistente a cadena de frío y humedad."
@@ -154,24 +184,7 @@ export default function CintaEmbalajePage() {
             Preguntas sobre cintas de embalaje personalizadas
           </h2>
           <div className="space-y-6">
-            {[
-              {
-                q: "¿Venden cinta adhesiva personalizada mayorista?",
-                a: "Sí. Ofrecemos precios escalonados por volumen — a mayor cantidad, menor costo unitario. Pedí cotización indicando tu volumen estimado y te pasamos precio mayorista.",
-              },
-              {
-                q: "¿Cuál es la diferencia entre cinta de embalaje personalizada y cinta adhesiva con logo?",
-                a: "Son productos similares. La cinta de embalaje personalizada se refiere al formato industrial de 48mm o 72mm pensado para cajas y logística. La cinta adhesiva con logo incluye también formatos más chicos (24mm) para usos diversos.",
-              },
-              {
-                q: "¿Tienen cinta para cajas personalizada resistente al frío?",
-                a: "Sí. Nuestra cinta de embalaje personalizada usa adhesivo acrílico de alta retención, apto para cadena de frío y ambientes húmedos. No se despega ni pierde adherencia.",
-              },
-              {
-                q: "¿Puedo usar la misma cinta adhesiva impresa para distintos productos?",
-                a: "Sí. La cinta de embalaje con logo se puede usar en cualquier tipo de caja o embalaje. Un solo diseño para todos tus envíos, simplificando la operación.",
-              },
-            ].map((faq, i) => (
+            {faqs.map((faq, i) => (
               <div key={i} className="rounded-lg border bg-white p-6">
                 <h3 className="mb-2 font-semibold text-neutral-900">{faq.q}</h3>
                 <p className="text-sm text-neutral-600">{faq.a}</p>
