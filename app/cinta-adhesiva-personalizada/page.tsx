@@ -1,4 +1,5 @@
 import { Metadata } from "next"
+import Link from "next/link"
 import { ProductHero } from "@/components/product/ProductHero"
 import { SpecsTable } from "@/components/product/SpecsTable"
 import { ProductCTA } from "@/components/product/ProductCTA"
@@ -164,6 +165,30 @@ export default function CintaAdhesivaPage() {
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* Guías relacionadas (link producto -> blog) */}
+      <section className="py-12">
+        <div className="mx-auto max-w-4xl px-4">
+          <h2 className="mb-6 text-xl font-bold text-neutral-900">Guías relacionadas</h2>
+          <ul className="grid gap-3 sm:grid-cols-2">
+            <li>
+              <Link href="/blog/como-disenar-tu-cinta-adhesiva-con-logo" className="text-primary hover:underline">
+                Cómo diseñar tu cinta con logo
+              </Link>
+            </li>
+            <li>
+              <Link href="/blog/tipos-de-cinta-adhesiva" className="text-primary hover:underline">
+                Tipos de cinta adhesiva y para qué sirve cada una
+              </Link>
+            </li>
+            <li>
+              <Link href="/blog/cuanto-cuesta-una-cinta-adhesiva-personalizada-en-argentina" className="text-primary hover:underline">
+                ¿Cuánto cuesta una cinta personalizada?
+              </Link>
+            </li>
+          </ul>
         </div>
       </section>
 
