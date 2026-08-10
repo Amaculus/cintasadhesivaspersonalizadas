@@ -285,6 +285,7 @@ export function Cotizador() {
     const g = (window as unknown as { gtag?: (...a: unknown[]) => void }).gtag
     if (typeof g === "function") {
       g("event", "generate_lead", { currency: "ARS", value: cotizacion?.total })
+      g("event", "whatsapp_click", { source: "/cotizar" })
     }
   }
 

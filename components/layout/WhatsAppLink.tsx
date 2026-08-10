@@ -14,6 +14,11 @@ export function WhatsAppLink({
   const pathname = usePathname()
 
   function handleClick() {
+    // GA4: cada click de WhatsApp = intención de contacto (evento clave)
+    const g = (window as unknown as { gtag?: (...a: unknown[]) => void }).gtag
+    if (typeof g === "function") {
+      g("event", "whatsapp_click", { source: pathname })
+    }
     // fire and forget — don't block navigation
     fetch("/api/track", {
       method: "POST",
