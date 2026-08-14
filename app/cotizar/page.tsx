@@ -21,6 +21,31 @@ export default function CotizarPage() {
           lo cerramos por WhatsApp.
         </p>
         <Cotizador />
+
+        <div className="mt-16 space-y-10">
+          <div>
+            <h2 className="mb-4 text-2xl font-bold text-neutral-900">¿Cómo funciona el cotizador?</h2>
+            <ol className="ml-5 list-decimal space-y-2 text-neutral-600">
+              <li>Elegí el <strong>ancho, el tipo de cinta y la cantidad de rollos</strong>.</li>
+              <li>
+                Obtenés el <strong>precio al instante</strong>, calculado con la cotización del día.
+                A mayor cantidad, menor precio por rollo.
+              </li>
+              <li>
+                Cerrás el pedido por <strong>WhatsApp</strong> con un clic; podés adjuntar tu diseño
+                para que lo revisemos y vectoricemos antes de producir.
+              </li>
+            </ol>
+          </div>
+          <div>
+            <h2 className="mb-4 text-2xl font-bold text-neutral-900">¿Qué incluye el precio?</h2>
+            <p className="text-neutral-600">
+              El precio incluye la <strong>impresión de tu logo</strong> en hasta 3 colores y el{" "}
+              <strong>polímero de la primera impresión</strong> — en reimpresiones del mismo diseño
+              no se vuelve a cobrar. Es un valor orientativo que se confirma al cerrar el pedido.
+            </p>
+          </div>
+        </div>
       </div>
     </section>
   )

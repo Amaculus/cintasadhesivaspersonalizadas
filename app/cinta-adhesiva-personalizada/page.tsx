@@ -59,6 +59,14 @@ const faqs = [
     q: "¿En qué anchos viene la cinta adhesiva personalizada?",
     a: "Cotizamos online en 24mm (tipo scotch) y 48mm (el ancho estándar), con largo de 50m o 100m por rollo. El formato de 72mm está disponible a consultar.",
   },
+  {
+    q: "¿La cinta adhesiva personalizada deja residuo al despegar?",
+    a: "Nuestra cinta usa adhesivo acrílico de calidad, que sella firme pero se retira más limpio que las cintas de caucho baratas. Sobre superficies limpias no deja la mancha pegajosa típica de la cinta común.",
+  },
+  {
+    q: "¿Puedo elegir el color de la tinta de mi logo?",
+    a: "Sí. Imprimimos en hasta 3 colores de tinta plana. Podés definir tus colores en Pantone para máxima precisión de marca.",
+  },
 ]
 
 const faqSchema = {
@@ -151,8 +159,91 @@ export default function CintaAdhesivaPage() {
         </div>
       </section>
 
-      {/* FAQ específica de esta landing */}
+      {/* Cinta scotch personalizada */}
       <section className="py-16">
+        <div className="mx-auto max-w-4xl px-4">
+          <h2 className="mb-6 text-2xl font-bold text-neutral-900">Cinta scotch personalizada</h2>
+          <div className="space-y-4 text-neutral-600">
+            <p>
+              La <strong>cinta scotch personalizada</strong> es la versión impresa con tu logo de la
+              clásica cinta transparente. En Argentina se le dice &quot;cinta scotch&quot; a la cinta
+              adhesiva transparente de uso general; nosotros la fabricamos con tu marca en formato
+              chico de <strong>24mm</strong> —ideal para cajas pequeñas, sobres o como detalle de
+              marca— y también en 48mm.
+            </p>
+            <p>
+              A diferencia de la cinta genérica del kiosco, la scotch personalizada suma branding a
+              cada cierre: se imprime en hasta 3 colores y podés elegir fondo transparente o blanco.
+              Es la forma más económica de que hasta el paquete más chico salga con tu identidad.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Transparente vs blanca */}
+      <section className="bg-neutral-50 py-16">
+        <div className="mx-auto max-w-4xl px-4">
+          <h2 className="mb-6 text-2xl font-bold text-neutral-900">
+            Fondo transparente o blanco: ¿cuál conviene?
+          </h2>
+          <p className="mb-6 text-neutral-600">
+            Las dos versiones se imprimen en hasta 3 colores; la diferencia está en el fondo:
+          </p>
+          <div className="overflow-hidden rounded-lg border bg-white">
+            <table className="w-full">
+              <thead>
+                <tr className="bg-neutral-100">
+                  <th className="px-6 py-3 text-left text-sm font-semibold text-neutral-900">Fondo</th>
+                  <th className="px-6 py-3 text-left text-sm font-semibold text-neutral-900">Cuándo elegirlo</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr className="bg-white">
+                  <td className="px-6 py-3 text-sm font-medium text-neutral-900">Transparente</td>
+                  <td className="px-6 py-3 text-sm text-neutral-600">
+                    El logo &quot;flota&quot; sobre el cartón de la caja. Look prolijo y más económico;
+                    ideal si tu diseño funciona en tinta sobre el marrón del kraft.
+                  </td>
+                </tr>
+                <tr className="bg-neutral-50">
+                  <td className="px-6 py-3 text-sm font-medium text-neutral-900">Blanco</td>
+                  <td className="px-6 py-3 text-sm text-neutral-600">
+                    Fondo blanco opaco que da máximo contraste y hace resaltar el color del logo.
+                    Ideal para diseños de varios colores o marcas que priorizan la visibilidad.
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      {/* Desde pocas unidades */}
+      <section className="py-16">
+        <div className="mx-auto max-w-4xl px-4">
+          <h2 className="mb-6 text-2xl font-bold text-neutral-900">
+            Cinta adhesiva personalizada desde pocas unidades
+          </h2>
+          <div className="space-y-4 text-neutral-600">
+            <p>
+              No hace falta comprar miles de rollos para arrancar. Trabajamos con cantidades
+              accesibles pensadas para <strong>emprendedores y PyMEs</strong> que quieren
+              profesionalizar sus envíos sin una inversión inicial alta. A medida que crecés, el
+              precio por rollo baja con el volumen.
+            </p>
+            <p>Calculá tu precio al instante según medidas, tipo y cantidad en el cotizador.</p>
+          </div>
+          <Link
+            href="/cotizar"
+            className="mt-6 inline-block rounded-lg bg-primary px-6 py-3 text-sm font-semibold text-white transition hover:bg-primary/90"
+          >
+            Cotizar mi cinta personalizada
+          </Link>
+        </div>
+      </section>
+
+      {/* FAQ específica de esta landing */}
+      <section className="bg-neutral-50 py-16">
         <div className="mx-auto max-w-4xl px-4">
           <h2 className="mb-8 text-center text-2xl font-bold text-neutral-900">
             Preguntas sobre cintas adhesivas personalizadas

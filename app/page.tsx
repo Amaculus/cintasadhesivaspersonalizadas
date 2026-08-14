@@ -1,6 +1,7 @@
 import { Metadata } from "next"
 import { HeroSection } from "@/components/home/HeroSection"
 import { ProductCards } from "@/components/home/ProductCards"
+import { AboutCintas } from "@/components/home/AboutCintas"
 import { WhyUs } from "@/components/home/WhyUs"
 import { Process } from "@/components/home/Process"
 import { HomeFAQ } from "@/components/home/HomeFAQ"
@@ -68,6 +69,7 @@ export default function HomePage() {
       <JsonLd data={websiteSchema} />
       <HeroSection />
       <ProductCards />
+      <AboutCintas />
       <WhyUs />
       <Process />
       <HomeFAQ />
