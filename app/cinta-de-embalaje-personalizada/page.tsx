@@ -67,6 +67,14 @@ const faqs = [
     q: "¿Qué ancho de cinta de embalaje conviene?",
     a: "El 48mm cubre la mayoría de las cajas y es el estándar que cotizamos online. Para cajas grandes o pesadas existe el formato de 72mm, disponible a consultar.",
   },
+  {
+    q: "¿La cinta de embalaje personalizada resiste la cadena de frío y la humedad?",
+    a: "Sí. Usa adhesivo acrílico de alta retención sobre film de polipropileno (BOPP), aptos para cadena de frío y ambientes húmedos: no se despega ni pierde adherencia con el manipuleo.",
+  },
+  {
+    q: "¿Cuántos rollos vienen por caja de cinta de embalaje?",
+    a: "El estándar es de 36 rollos por caja. En el cotizador podés pedir 36 rollos (1 caja), 72 (2 cajas) o 108 (3 cajas); a mayor cantidad de cajas, menor precio por rollo.",
+  },
 ]
 
 const faqSchema = {
@@ -130,7 +138,47 @@ export default function CintaEmbalajePage() {
         </div>
       </section>
 
+      {/* Medidas y formatos */}
       <section className="bg-neutral-50 py-16">
+        <div className="mx-auto max-w-4xl px-4">
+          <h2 className="mb-6 text-2xl font-bold text-neutral-900">
+            Medidas y formatos de las cintas de embalaje personalizadas
+          </h2>
+          <p className="mb-6 text-neutral-600">
+            Fabricamos las <strong>cintas de embalaje personalizadas</strong> en los formatos más
+            usados de la industria. El ancho define para qué tipo de caja conviene cada una:
+          </p>
+          <div className="overflow-hidden rounded-lg border bg-white">
+            <table className="w-full">
+              <thead>
+                <tr className="bg-neutral-100">
+                  <th className="px-6 py-3 text-left text-sm font-semibold text-neutral-900">Ancho</th>
+                  <th className="px-6 py-3 text-left text-sm font-semibold text-neutral-900">Uso ideal</th>
+                </tr>
+              </thead>
+              <tbody>
+                {[
+                  { w: "24 mm", u: "Cajas chicas, sobres y como detalle de marca (formato tipo scotch)." },
+                  { w: "48 mm", u: "El estándar de la industria: cubre la mayoría de las cajas de e-commerce y logística." },
+                  { w: "72 mm", u: "Cajas grandes o pesadas, o para sellar de una sola pasada (a consultar)." },
+                ].map((r, i) => (
+                  <tr key={r.w} className={i % 2 === 0 ? "bg-white" : "bg-neutral-50"}>
+                    <td className="px-6 py-3 text-sm font-medium text-neutral-900">{r.w}</td>
+                    <td className="px-6 py-3 text-sm text-neutral-600">{r.u}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <p className="mt-6 text-neutral-600">
+            Cada ancho viene en rollos de <strong>50 o 100 metros</strong>, en polipropileno (BOPP)
+            o kraft, con impresión de <strong>hasta 3 colores</strong> sobre fondo transparente o
+            blanco.
+          </p>
+        </div>
+      </section>
+
+      <section className="py-16">
         <div className="mx-auto max-w-6xl px-4">
           <h2 className="mb-8 text-center text-2xl font-bold text-neutral-900">
             Para quién es la cinta de embalaje con logo
@@ -187,6 +235,67 @@ export default function CintaEmbalajePage() {
                 ))}
               </tbody>
             </table>
+          </div>
+        </div>
+      </section>
+
+      {/* Precio y ahorro por volumen */}
+      <section className="bg-neutral-50 py-16">
+        <div className="mx-auto max-w-4xl px-4">
+          <h2 className="mb-6 text-2xl font-bold text-neutral-900">
+            Precio de la cinta de embalaje personalizada
+          </h2>
+          <div className="space-y-4 text-neutral-600">
+            <p>
+              El precio depende de tres factores: la <strong>cantidad de rollos</strong>, el{" "}
+              <strong>tipo de cinta</strong> y la <strong>cantidad de colores</strong>. El costo por
+              rollo baja fuerte con el volumen: comprando por caja accedés a precio mayorista.
+            </p>
+            <ul className="ml-5 list-disc space-y-1">
+              <li><strong>36 rollos (1 caja):</strong> punto de entrada, con el mayor costo por rollo.</li>
+              <li><strong>72 rollos (2 cajas):</strong> el precio por rollo ya baja de forma notable.</li>
+              <li><strong>108 rollos (3 cajas):</strong> el más conveniente del rango habitual.</li>
+            </ul>
+            <p>
+              El <strong>polímero de impresión</strong> se incluye en la primera tirada y no vuelve a
+              cobrarse en reimpresiones del mismo diseño. Calculá tu precio exacto al instante en el
+              cotizador.
+            </p>
+          </div>
+          <Link
+            href="/cotizar"
+            className="mt-6 inline-block rounded-lg bg-primary px-6 py-3 text-sm font-semibold text-white transition hover:bg-primary/90"
+          >
+            Calcular mi precio en el cotizador
+          </Link>
+        </div>
+      </section>
+
+      {/* Cómo imprimimos */}
+      <section className="py-16">
+        <div className="mx-auto max-w-4xl px-4">
+          <h2 className="mb-6 text-2xl font-bold text-neutral-900">
+            Cómo imprimimos tu cinta de embalaje
+          </h2>
+          <div className="space-y-4 text-neutral-600">
+            <p>
+              Imprimimos por <strong>flexografía</strong>: grabamos tu logo en una plancha de
+              polímero que transfiere la tinta a la cinta a alta velocidad. Por eso el costo por
+              metro baja tanto en las tiradas grandes.
+            </p>
+            <p>
+              Para el mejor resultado, enviá tu logo en <strong>formato vectorial</strong> (PDF, AI,
+              SVG o EPS) o un PNG de alta resolución. Antes de producir te enviamos un boceto digital
+              para aprobar. Lo contamos en detalle en{" "}
+              <Link href="/blog/como-disenar-tu-cinta-adhesiva-con-logo" className="text-primary hover:underline">
+                cómo diseñar tu cinta con logo
+              </Link>{" "}
+              y{" "}
+              <Link href="/blog/que-es-el-polimero-en-las-cintas-impresas" className="text-primary hover:underline">
+                qué es el polímero
+              </Link>
+              .
+            </p>
           </div>
         </div>
       </section>
