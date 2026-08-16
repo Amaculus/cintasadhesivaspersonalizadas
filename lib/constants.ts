@@ -19,6 +19,7 @@ export const NAV_LINKS = [
     ],
   },
   { label: "Blog", href: "/blog" },
+  { label: "Nosotros", href: "/nosotros" },
   { label: "Cotizar", href: "/cotizar" },
 ]
 
